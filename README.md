@@ -49,7 +49,5 @@ python3 aes_tool.py -d "ZfuiTSufzt0URjpee4jOYQ==" "mysecret"
 # Output: Hello World
 ```
 
-## License
-
 This project is open source and free to use.
-# AES-Deterministic-Encryption-Tool
+

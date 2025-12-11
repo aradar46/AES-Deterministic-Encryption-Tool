@@ -238,33 +238,43 @@ def aes_cbc_decrypt(ciphertext, key, iv):
 # --- Main Logic ---
 
 def core_encrypt(plaintext_text, password_text):
-    # Hardcoded IV (16 bytes of zeros)
-    iv_bytes = b'\x00' * 16
-
     # Hash the password to get a 16-byte key
     key_hash = hashlib.sha256(password_text.encode('utf-8')).digest()
     key_bytes = key_hash[:16]
     
     plaintext_bytes = plaintext_text.encode('utf-8')
 
+    # Derive IV from Key and Plaintext (Synthetic IV)
+    # This ensures determinism (same input = same output) but provides a unique IV per message
+    # preventing pattern analysis attacks common with fixed IVs.
+    iv_hash = hashlib.sha256(key_bytes + plaintext_bytes).digest()
+    iv_bytes = iv_hash[:16]
+
     # Encrypt using pure Python AES
     ciphertext = aes_cbc_encrypt(plaintext_bytes, key_bytes, iv_bytes)
 
+    # Prepend IV to ciphertext so it can be retrieved for decryption
+    final_data = iv_bytes + ciphertext
+
     # Format output (Base64)
-    return base64.b64encode(ciphertext).decode('utf-8')
+    return base64.b64encode(final_data).decode('utf-8')
 
 def core_decrypt(ciphertext_b64, password_text):
-    # Hardcoded IV (16 bytes of zeros)
-    iv_bytes = b'\x00' * 16
-
     # Hash the password to get a 16-byte key
     key_hash = hashlib.sha256(password_text.encode('utf-8')).digest()
     key_bytes = key_hash[:16]
     
     try:
-        ciphertext_bytes = base64.b64decode(ciphertext_b64)
-    except:
-        return "Error: Invalid Base64 input"
+        data = base64.b64decode(ciphertext_b64)
+    except Exception as e:
+        return f"Error: Invalid Base64 input. Please ensure you provided the actual ciphertext string, not a placeholder. Details: {e}"
+
+    if len(data) < 16:
+        return "Error: Ciphertext too short"
+
+    # Extract IV (first 16 bytes)
+    iv_bytes = data[:16]
+    ciphertext_bytes = data[16:]
 
     try:
         # Decrypt using pure Python AES
