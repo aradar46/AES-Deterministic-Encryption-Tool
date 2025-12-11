@@ -1,6 +1,6 @@
-# AES Encryption Tool
+# AES Deterministic Encryption Tool
 
-A lightweight, standalone Python script for AES-128 CBC encryption and decryption.
+A Deterministic Standalone Python Script for AES-128 CBC Encryption and Decryption.
 
 ## Features
 
@@ -9,7 +9,7 @@ A lightweight, standalone Python script for AES-128 CBC encryption and decryptio
 - **PKCS7 Padding**: Ensures data is properly padded.
 - **Base64 Output**: Ciphertext is encoded in Base64 for easy sharing.
 - **Secure Key Derivation**: Hashes your password using SHA-256 to generate a secure 16-byte key.
-- **Hardcoded IV**: Uses a fixed IV (16 null bytes) for deterministic output (same input + same password = same output).
+- **Synthetic IV (SIV)**: Derives the IV from the key and plaintext. This ensures the encryption is **deterministic** (same input + same password = same output) while being secure against pattern analysis attacks (different messages have different IVs).
 
 ## Usage
 
@@ -52,3 +52,4 @@ python3 aes_tool.py -d "ZfuiTSufzt0URjpee4jOYQ==" "mysecret"
 ## License
 
 This project is open source and free to use.
+# AES-Deterministic-Encryption-Tool
