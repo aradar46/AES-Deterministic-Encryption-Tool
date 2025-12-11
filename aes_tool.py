@@ -56,10 +56,10 @@ def rot_word(word):
     return ((word << 8) & 0xFFFFFFFF) | (word >> 24)
 
 def key_expansion(key):
+    if len(key) != 16:
+        raise ValueError("Key must be exactly 16 bytes for AES-128")
+
     key_symbols = [x for x in key]
-    if len(key_symbols) < 4 * 4:
-        for i in range(4 * 4 - len(key_symbols)):
-            key_symbols.append(0x01)
 
     key_schedule = [0] * 44
     for i in range(4):
